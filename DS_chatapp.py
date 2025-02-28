@@ -175,14 +175,11 @@ class DeepSeekChatGUI:
                     self._parse_markdown(content)
                 elif msg_type == 'full':
                     # 最终状态处理（如解锁输入框）
-                    self.input_entry.config(state=tk.NORMAL) 
-                    self.send_button.config(state=tk.NORMAL) 
-                    self.current_streaming  = False
+                    self.finalize_response()
                     self.stream_queue.task_done() 
                     break
                 elif msg_type == 'error':
                     self.response_area.insert(tk.END,  f"\n错误: {content}\n")
-
             except queue.Empty:
                 # 队列无数据时退出循环,100ms轮询一次
                 self.master.after(100,  self.update_gui_from_stream) 
@@ -206,7 +203,7 @@ class DeepSeekChatGUI:
     #     self.response_area.see(tk.END)   # 自动滚动到底部
     #     self.response_area.config(state=tk.DISABLED) 
         
-    def finalize_response(self, full_reply):
+    def finalize_response(self):
         """完成响应处理"""
         self.progress.stop() 
         self.progress.pack_forget() 
